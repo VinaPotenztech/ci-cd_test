@@ -19,22 +19,23 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: cd src && npm install
+        run: |
+          cd src
+          npm install
 
-      - name: Install AWS SAM CLI
+      - name: Setup AWS SAM CLI
         uses: aws-actions/setup-sam@v2
 
       - name: Build with SAM
         run: sam build
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
       - name: Deploy with SAM
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ap-south-1 # change as needed
         run: |
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset \
-            --stack-name my-lambda-stack \
-            --region $AWS_REGION \
-            --capabilities CAPABILITY_IAM \
-            --resolve-s3
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
