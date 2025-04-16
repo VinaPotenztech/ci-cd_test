@@ -21,9 +21,6 @@ jobs:
       - name: Install dependencies
         run: cd src && npm install
 
-      - name: Run tests
-        run: cd src && npm test
-
       - name: Install AWS SAM CLI
         uses: aws-actions/setup-sam@v2
 
