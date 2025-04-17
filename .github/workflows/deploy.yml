@@ -26,8 +26,10 @@ jobs:
       - name: Install Newman
         run: |
           npm install -g newman
-      - name: Debug List files in tests folder
-        run: ls -l tests
+
+      - name: List test files
+        run: |
+          ls -la tests
 
       - name: Run Postman tests/CI-CD.postman_collection.json
         run: |
