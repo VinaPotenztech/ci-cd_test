@@ -1,0 +1,47 @@
+{
+  "info": {
+    "_postman_id": "3bf7305f-f826-40d7-a1b9-7ee4a0c7ac1d",
+    "name": "CI/CD",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+    "_exporter_id": "37819522",
+    "_collection_link": "https://potenz-technology.postman.co/workspace/Potenz-Technology-Workspace~62ea82c3-b72f-4f49-864c-fdaecf861111/collection/37819522-3bf7305f-f826-40d7-a1b9-7ee4a0c7ac1d?action=share&source=collection_link&creator=37819522"
+  },
+  "item": [
+    {
+      "name": "register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n    \"name\":\"john\", \"email\":\"john@email.com\", \"password\":\"123\",\"role\":\"user\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://localhost:6000/ats/api/employer-signup"
+      },
+      "response": []
+    },
+    {
+      "name": "login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://localhost:6000/ats/api/employer-login"
+      },
+      "response": []
+    }
+  ]
+}

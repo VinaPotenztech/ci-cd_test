@@ -18,8 +18,13 @@ Resources:
       Architectures:
         - x86_64
       Events:
-        HelloWorld:
+        Register:
           Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Path: /ats/api/employer-signup
+            Method: post
+        Login:
+          Type: Api
+          Properties:
+            Path: /ats/api/employer-login
+            Method: post
