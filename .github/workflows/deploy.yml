@@ -1,12 +1,12 @@
-name: Deploy to AWS Lambda
+name: Test and Deploy to AWS Lambda
 
 on:
   push:
     branches:
-      - main # or your deployment branch
+      - main
 
 jobs:
-  build-and-deploy:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,21 +24,24 @@ jobs:
           npm install
 
       - name: Install Newman
-        run: |
-          npm install -g newman
-
-      - name: Start server in background
-        run: cd src
-          npm run dev &
-
-      - name: Run Postman collection
-        run: newman run tests/CI-CD.postman_collection.json
+        run: npm install -g newman
 
       - name: Setup AWS SAM CLI
         uses: aws-actions/setup-sam@v2
 
       - name: Build with SAM
         run: sam build
+
+      - name: Start local API (background)
+        run: |
+          sam local start-api &
+          sleep 10  # give time to boot up
+
+      - name: Run Postman tests locally
+        run: |
+          newman run tests/CI-CD.postman_collection.json \
+            -e tests/local-environment.postman_environment.json \
+            --bail
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -47,6 +50,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy with SAM
+      - name: Deploy to Lambda (staging)
         run: |
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+          sam deploy --config-env staging --no-confirm-changeset --no-fail-on-empty-changeset
