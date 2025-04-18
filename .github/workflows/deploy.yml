@@ -52,6 +52,7 @@ jobs:
             --stack-name ${{ env.STACK_NAME }} \
             --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" \
             --output text)
+          echo "api_url=$URL"
           echo "api_url=$URL" >> $GITHUB_OUTPUT
 
   postman-test:
