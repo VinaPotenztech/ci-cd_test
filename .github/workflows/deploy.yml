@@ -78,7 +78,7 @@ jobs:
 
       - name: Run Postman Collection
         run: |
-          newman run postman/collection.json \
+          newman run CI-CD.postman_collection.json\
             --environment postman/environment.json \
             --reporters cli,json \
             --reporter-json-export postman/report.json
