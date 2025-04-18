@@ -2,8 +2,8 @@ const axios = require('axios');
 
 const BASE_URL = 'http://127.0.0.1:3000';
 
-describe('Local Lambda API Tests', () => {
-  test('Register', async () => {
+describe('Lambda API Tests', () => {
+  test('Signup', async () => {
     const res = await axios.post(`${BASE_URL}/employer-signup`, {
       name: 'john',
       email: 'john@email.com',
