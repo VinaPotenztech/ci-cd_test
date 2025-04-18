@@ -31,8 +31,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install SAM CLI
-        run: |
-          pip install aws-sam-cli
+        run: pip install aws-sam-cli
 
       - name: Build SAM app
         run: sam build
@@ -74,17 +73,18 @@ jobs:
 
       - name: Create Postman environment with API URL
         run: |
-          sed "s|{{api_url}}|${{ needs.build-deploy.outputs.api_url }}|g" postman/environment.template.json > postman/environment.json
+          mkdir -p tests
+          sed "s|{{api_url}}|${{ needs.build-deploy.outputs.api_url }}|g" tests/environment.template.json > tests/environment.json
 
-      - name: Run Postman Collection
+      - name: Run Postman Tests with Newman
         run: |
-          newman run CI-CD.postman_collection.json\
-            --environment postman/environment.json \
+          newman run tests/CI-CD.postman_collection.json \
+            --environment tests/environment.json \
             --reporters cli,json \
-            --reporter-json-export postman/report.json
+            --reporter-json-export tests/report.json
 
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v4
+      - name: Upload Postman Test Report
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: postman-report
-          path: postman/report.json
+          path: tests/report.json

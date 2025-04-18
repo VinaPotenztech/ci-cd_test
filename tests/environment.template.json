@@ -1,5 +1,5 @@
 {
-  "name": "CI Environment",
+  "name": "CI/CD Environment",
   "values": [
     {
       "key": "baseUrl",
