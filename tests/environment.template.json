@@ -1,0 +1,10 @@
+{
+  "name": "CI Environment",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "{{api_url}}",
+      "enabled": true
+    }
+  ]
+}
