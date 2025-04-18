@@ -28,9 +28,3 @@ Resources:
           Properties:
             Path: /ats/api/employer-login
             Method: post
-Outputs:
-  ApiUrl:
-    Description: 'API Gateway endpoint URL'
-    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
-    Export:
-      Name: ApiUrl
