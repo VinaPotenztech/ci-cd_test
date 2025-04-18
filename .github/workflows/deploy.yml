@@ -82,9 +82,3 @@ jobs:
             --environment tests/environment.json \
             --reporters cli,json \
             --reporter-json-export tests/report.json
-
-      - name: Upload Postman Test Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: postman-report
-          path: tests/report.json
