@@ -45,7 +45,7 @@ jobs:
 
       - name: Run integration tests
         working-directory: ./src
-        run: npm run test:local
+        run: node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles
 
   deploy:
     name: Deploy SAM
