@@ -31,5 +31,5 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const server = serverless(app);
-
+export default app;
 export const lambdaHandler = server;

@@ -25,6 +25,9 @@ jobs:
       - name: Install AWS SAM CLI
         run: pip install aws-sam-cli
 
+      - name: Build SAM before testing
+        run: sam build
+
       - name: Install test dependencies
         working-directory: ./src
         run: npm install
