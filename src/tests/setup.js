@@ -1,8 +1,8 @@
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-dotenv.config({ pat: '.env.test' });
-
+dotenv.config();
+console.log('process.env', process.env);
 beforeAll(async () => {
   await mongoose.connect(process.env.MONGO_URI);
 });
