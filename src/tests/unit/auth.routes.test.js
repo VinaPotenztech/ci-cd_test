@@ -1,7 +1,5 @@
 import request from 'supertest';
-import app from '../../src/app.js';
-import User from '../../src/models/user.model.js';
-
+import app from '../../app.mjs';
 describe('Auth Routes', () => {
   describe('POST /employer-signup', () => {
     it('should register a user', async () => {
