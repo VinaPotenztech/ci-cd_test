@@ -1,49 +1,68 @@
 import request from 'supertest';
-import mongoose from 'mongoose';
 import app from '../../app.mjs';
 
-beforeAll(async () => {
-  await mongoose.connect(process.env.MONGO_URI);
-});
-
-afterAll(async () => {
-  await mongoose.connection.close();
-});
-
 describe('Auth Routes', () => {
-  it('should register a user', async () => {
-    const res = await request(app)
-      .post('/employer-signup')
-      .send({ email: 'test@example.com', password: 'password123' });
+  describe('POST /ats/api/employer-signup', () => {
+    it('should register a user', async () => {
+      const res = await request(app).post('/ats/api/employer-signup').send({
+        name: 'John Doe',
+        email: 'john@test.com',
+        password: 'Password123!',
+        role: 'employer',
+      });
 
-    expect(res.status).toBe(201);
-    expect(res.body.message).toBe('User registered successfully');
+      expect(res.status).toBe(201);
+      expect(res.body.message).toBe('User registered successfully');
+    });
+
+    it('should not register with duplicate email', async () => {
+      await request(app).post('/ats/api/employer-signup').send({
+        name: 'John',
+        email: 'john@test.com',
+        password: 'pass',
+        role: 'employer',
+      });
+
+      const res = await request(app).post('/ats/api/employer-signup').send({
+        name: 'John',
+        email: 'john@test.com',
+        password: 'pass',
+        role: 'employer',
+      });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe('User already exists');
+    });
   });
 
-  it('should not register with duplicate email', async () => {
-    const res = await request(app)
-      .post('/employer-signup')
-      .send({ email: 'test@example.com', password: 'password123' });
+  describe('POST /ats/api/employer-login', () => {
+    beforeEach(async () => {
+      await request(app).post('/ats/api/employer-signup').send({
+        name: 'Test Login',
+        email: 'login@test.com',
+        password: 'testpass',
+        role: 'employer',
+      });
+    });
 
-    expect(res.status).toBe(400);
-    expect(res.body.message).toBe('User already exists');
-  });
+    it('should login successfully', async () => {
+      const res = await request(app).post('/ats/api/employer-login').send({
+        email: 'login@test.com',
+        password: 'testpass',
+      });
 
-  it('should login successfully', async () => {
-    const res = await request(app)
-      .post('/employer-login')
-      .send({ email: 'test@example.com', password: 'password123' });
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('token');
+    });
 
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('token');
-  });
+    it('should return error for wrong credentials', async () => {
+      const res = await request(app).post('/ats/api/employer-login').send({
+        email: 'login@test.com',
+        password: 'wrongpass',
+      });
 
-  it('should return error for wrong credentials', async () => {
-    const res = await request(app)
-      .post('/employer-login')
-      .send({ email: 'test@example.com', password: 'wrongpass' });
-
-    expect(res.status).toBe(400);
-    expect(res.body.message).toBe('Invalid credentials');
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe('Invalid credentials');
+    });
   });
 });
