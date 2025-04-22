@@ -7,6 +7,7 @@ export default {
   transform: {},
   moduleFileExtensions: ['js', 'mjs', 'json'],
   testMatch: ['**/tests/**/*.test.js'],
+  roots: ['<rootDir>/src'],
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: {
     '^(.+).js$': '$1',
