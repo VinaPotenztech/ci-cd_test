@@ -7,7 +7,7 @@ on:
 env:
   AWS_REGION: us-east-1
   STACK_NAME: cicd-test
-  MONGO_URI: ${{ secrets.MONGO_URI }}
+  MONGO_URI: mongodb+srv://vina:vina@cluster0.i3fl1.mongodb.net/cicd?retryWrites=true&w=majority&appName=Cluster0
 
 jobs:
   local-test:

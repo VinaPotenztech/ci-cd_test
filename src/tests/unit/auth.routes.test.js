@@ -1,5 +1,6 @@
 import request from 'supertest';
 import app from '../../app.mjs';
+
 describe('Auth Routes', () => {
   describe('POST /employer-signup', () => {
     it('should register a user', async () => {
