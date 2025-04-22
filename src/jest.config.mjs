@@ -1,3 +1,7 @@
+// jest.config.js
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 export default {
   testEnvironment: 'node',
   transform: {},
@@ -6,7 +10,7 @@ export default {
   roots: ['<rootDir>/src'],
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: {
-    '/^(.+).js$/': '$1', // Resolve .js imports
-    'ipaddr.js': require.resolve('ipaddr.js'), // Explicitly map ipaddr.js if necessary
+    '^(.+).js$': '$1',
+    'ipaddr.js': require.resolve('ipaddr.js'),
   },
 };
