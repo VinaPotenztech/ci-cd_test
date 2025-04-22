@@ -6,12 +6,10 @@ export default {
   testEnvironment: 'node',
   transform: {},
   moduleFileExtensions: ['js', 'mjs', 'json'],
-  testMatch: ['**/tests/**/*.test.js'],
-  testMatch: ['<rootDir>/tests/**/*.test.js'], // tests inside src/
-  roots: ['<rootDir>'], // NOT <rootDir>/src
-  moduleDirectories: ['node_modules', 'src'],
+  testMatch: ['<rootDir>/tests/**/*.test.js'],
+  roots: ['<rootDir>'],
+  moduleDirectories: ['node_modules', '<rootDir>'],
   moduleNameMapper: {
-    '^(.+).js$': '$1',
-    'ipaddr.js': require.resolve('ipaddr.js'),
+    '^(.+).mjs$': '$1', // Map .mjs imports correctly
   },
 };
