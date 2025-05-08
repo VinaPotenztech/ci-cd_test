@@ -21,11 +21,11 @@ afterEach(async () => {
 });
 
 describe('Auth Controller', () => {
-  describe('POST /register', () => {
+  describe('POST /employer-signup', () => {
     it('should register a new user', async () => {
       bcryptjs.hash.mockResolvedValue('hashed-password');
 
-      const res = await request(app).post('/register').send({
+      const res = await request(app).post('/employer-signup').send({
         name: 'Test User',
         email: 'test@example.com',
         password: 'password123',
@@ -44,7 +44,7 @@ describe('Auth Controller', () => {
         role: 'user',
       });
 
-      const res = await request(app).post('/register').send({
+      const res = await request(app).post('/employer-signup').send({
         name: 'Test User',
         email: 'test@example.com',
         password: 'password123',
@@ -56,7 +56,7 @@ describe('Auth Controller', () => {
     });
   });
 
-  describe('POST /login', () => {
+  describe('POST /employer-login', () => {
     it('should login with valid credentials', async () => {
       const password = 'password123';
       const hashedPassword = await bcryptjs.hash(password, 10);
@@ -70,7 +70,7 @@ describe('Auth Controller', () => {
       bcryptjs.compare.mockResolvedValue(true);
       jwt.sign.mockReturnValue('fake-jwt-token');
 
-      const res = await request(app).post('/login').send({
+      const res = await request(app).post('/employer-login').send({
         email: 'test@example.com',
         password,
       });
@@ -81,7 +81,7 @@ describe('Auth Controller', () => {
     });
 
     it('should not login with invalid credentials', async () => {
-      const res = await request(app).post('/login').send({
+      const res = await request(app).post('/employer-login').send({
         email: 'wrong@example.com',
         password: 'wrongpass',
       });
@@ -113,6 +113,7 @@ describe('Auth Controller', () => {
         { userId: user._id, role: user.role },
         process.env.JWT_SECRET,
       );
+
       const res = await request(app)
         .get('/profile')
         .set('Authorization', `Bearer ${token}`);

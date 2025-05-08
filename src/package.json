@@ -32,7 +32,7 @@
   "scripts": {
     "start": "nodemon app.mjs",
     "dev": "node app.mjs",
-    "test": "jest --coverage --config=jest.config.mjs"
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --coverage --config=jest.config.mjs"
   },
   "devDependencies": {
     "chai": "^4.3.6",
