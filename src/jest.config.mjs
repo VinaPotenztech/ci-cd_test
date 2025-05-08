@@ -1,7 +1,9 @@
 export default {
   testEnvironment: 'node',
+  testMatch: [
+    '**/tests/**/*.test.js', // Adjust if your tests have .spec.js or .ts
+  ],
   transform: {},
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
-  },
+  extensionsToTreatAsEsm: ['.js'],
+  collectCoverage: true,
 };
