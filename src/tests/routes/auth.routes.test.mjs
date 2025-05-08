@@ -1,8 +1,8 @@
 import request from 'supertest';
-import app from '../../app'; // ensure this is the correct path to your app
+import app from '../../app.mjs'; // ensure this is the correct path to your app
 
 describe('Employer Auth Routes', () => {
-  test('POST /employer-signup - success', async () => {
+  test('POST /ats/api/employer-signup - success', async () => {
     const res = await request(app).post('/employer-signup').send({
       name: 'Test Employer',
       email: 'employer@example.com',
@@ -13,7 +13,7 @@ describe('Employer Auth Routes', () => {
     expect(res.body).toHaveProperty('message', 'User registered successfully');
   });
 
-  test('POST /employer-login - success', async () => {
+  test('POST /ats/api/employer-login - success', async () => {
     // You may want to register the user before this test or use a mock
     const res = await request(app).post('/employer-login').send({
       email: 'employer@example.com',

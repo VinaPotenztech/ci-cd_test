@@ -2,8 +2,9 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import app from '../../app.js'; // your Express app
+import app from '../../app.mjs'; // your Express app
 import User from '../../models/user.model.js';
+import jest from 'jest'; // Import jest explicitly
 
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
@@ -26,9 +27,9 @@ describe('Auth Controller', () => {
       bcryptjs.hash.mockResolvedValue('hashed-password');
 
       const res = await request(app).post('/employer-signup').send({
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'password123',
+        name: 'john',
+        email: 'john@email.com',
+        password: '123',
         role: 'user',
       });
 
@@ -39,15 +40,15 @@ describe('Auth Controller', () => {
     it('should not register user if email exists', async () => {
       await User.create({
         name: 'Existing User',
-        email: 'test@example.com',
-        password: 'hashed-password',
+        email: 'john@email.com',
+        password: '123',
         role: 'user',
       });
 
       const res = await request(app).post('/employer-signup').send({
         name: 'Test User',
-        email: 'test@example.com',
-        password: 'password123',
+        email: 'john@email.com',
+        password: '123',
         role: 'user',
       });
 
@@ -58,11 +59,11 @@ describe('Auth Controller', () => {
 
   describe('POST /employer-login', () => {
     it('should login with valid credentials', async () => {
-      const password = 'password123';
+      const password = '123';
       const hashedPassword = await bcryptjs.hash(password, 10);
       const user = await User.create({
         name: 'User',
-        email: 'test@example.com',
+        email: 'john@email.com',
         password: hashedPassword,
         role: 'user',
       });

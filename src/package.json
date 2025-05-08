@@ -32,10 +32,14 @@
   "scripts": {
     "start": "nodemon app.mjs",
     "dev": "node app.mjs",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --coverage --config=jest.config.mjs"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "devDependencies": {
+    "@babel/core": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
+    "babel-jest": "^29.7.0",
     "chai": "^4.3.6",
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "mocha": "^10.2.0",
     "nodemon": "^3.1.9",

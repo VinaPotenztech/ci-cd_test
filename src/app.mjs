@@ -3,7 +3,6 @@ import serverless from 'serverless-http';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
-
 import { connectDB } from './config/dbConnection.mjs';
 import userRoutes from './routes/user.routes.js';
 

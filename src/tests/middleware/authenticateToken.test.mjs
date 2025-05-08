@@ -1,4 +1,5 @@
-import authenticateToken from '../../middleware/authenticateToken';
+import authenticateToken from '../../middleware/authMiddleware.js';
+import jest from 'jest'; // Import jest explicitly
 
 describe('Authenticate Token Middleware', () => {
   test('should return 401 if no token is provided', () => {
