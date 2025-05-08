@@ -1,10 +1,9 @@
 export default {
   testEnvironment: 'node',
   testMatch: ['**/src/tests/**/*.test.mjs'],
-  // transform: {
-  //   '^.+\\.m?[jt]sx?$': ['babel-jest', { configFile: './babel.config.mjs' }],
-  // },
-  transform: {},
+  transform: {
+    // '^.+\\.m?[jt]sx?$': ['babel-jest', { configFile: './babel.config.mjs' }],
+  },
   injectGlobals: true,
   moduleFileExtensions: ['js', 'mjs'],
   testEnvironment: 'node',
