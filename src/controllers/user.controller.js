@@ -21,13 +21,10 @@ export const register = async (req, res) => {
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
-
     //hash password
     const hashedPassword = await bcryptjs.hash(password, 10);
-
     //create new user
     user = new User({ name, email, password: hashedPassword, role });
-
     await user.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
@@ -49,18 +46,15 @@ export const login = async (req, res) => {
         .status(400)
         .json({ message: 'Email and Password is required' });
     }
-
     //check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
-
     //compare password
     const isMatch = await bcryptjs.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: 'Invalid credentials' });
-
     const tokenData = {
       userId: user._id,
       role: user.role,
@@ -69,7 +63,6 @@ export const login = async (req, res) => {
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
       expiresIn: '1d',
     });
-
     return res.status(200).json({
       token: token,
       success: true,

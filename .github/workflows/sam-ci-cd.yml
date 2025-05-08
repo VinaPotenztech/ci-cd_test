@@ -23,30 +23,45 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Set up Python (for SAM CLI)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
       - name: Install AWS SAM CLI
         run: pip install aws-sam-cli
 
-      - name: Build SAM before testing
+      - name: Build SAM application
         run: sam build
 
       - name: Install test dependencies
         working-directory: ./src
         run: npm install
 
-      - name: Start local API (background)
-        run: sam local start-api &
+      - name: Start local API in background
+        run: |
+          sam local start-api > sam-output.log 2>&1 &
+          echo $! > sam.pid
         env:
           DOCKER_LAMBDA_USE_STDIN: 1
 
       - name: Wait for API to be ready
         run: |
           for i in {1..10}; do
-            curl -s http://127.0.0.1:3000/employer-login && break || sleep 3
+            if curl -s http://127.0.0.1:3000/employer-login; then
+              echo "API is up"
+              break
+            fi
+            echo "Waiting for API..."
+            sleep 5
           done
 
-      - name: Run integration tests
+      - name: Run tests
         working-directory: ./src
-        run: node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles
+        run: npm test
+
+      - name: Stop SAM local
+        run: kill $(cat sam.pid) || true
 
   deploy:
     name: Deploy SAM
@@ -63,6 +78,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Python (for SAM CLI)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
       - name: Install AWS SAM CLI
         run: pip install aws-sam-cli

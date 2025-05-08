@@ -8,17 +8,23 @@
   "author": "SAM CLI",
   "license": "MIT",
   "dependencies": {
+    "acorn": "^8.14.1",
     "aws-sdk": "^2.1692.0",
-    "axios": ">=1.6.0",
+    "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "fs": "^0.0.1-security",
+    "glob": "^11.0.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.0",
+    "path": "^0.12.7",
+    "postman-collection": "^5.0.2",
     "serverless-http": "^3.2.0",
     "socket.io": "^4.8.1",
     "uuid": "^11.1.0"
@@ -26,7 +32,10 @@
   "scripts": {
     "start": "nodemon app.mjs",
     "dev": "node app.mjs",
-    "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles"
+    "test": "jest --coverage"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "devDependencies": {
     "chai": "^4.3.6",
