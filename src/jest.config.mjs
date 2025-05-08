@@ -1,15 +1,8 @@
-// jest.config.js
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
 export default {
-  testEnvironment: 'node',
   transform: {},
-  moduleFileExtensions: ['js', 'mjs', 'json'],
-  testMatch: ['<rootDir>/tests/**/*.test.js'],
-  roots: ['<rootDir>'],
-  moduleDirectories: ['node_modules', '<rootDir>'],
+  extensionsToTreatAsEsm: ['.js'],
+  testEnvironment: 'node',
   moduleNameMapper: {
-    '^(.+).mjs$': '$1', // Map .mjs imports correctly
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
 };
