@@ -11,7 +11,9 @@ export default {
     __DEV__: true, // if needed for your setup
   },
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1', // Adjust this for relative imports if necessary
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  //extensionsToTreatAsEsm: ['.mjs'],
+  //extensionsToTreatAsEsm: ['.js', '.mjs'],
 };
+
+// transform: {},

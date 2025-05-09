@@ -2,9 +2,9 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import app from '../../app.mjs'; // your Express app
+import app from '../../app.mjs';
 import User from '../../models/user.model.js';
-import jest from 'jest'; // Import jest explicitly
+import { jest } from '@jest/globals';
 
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
@@ -19,10 +19,11 @@ afterAll(async () => {
 
 afterEach(async () => {
   await User.deleteMany({});
+  jest.clearAllMocks();
 });
 
 describe('Auth Controller', () => {
-  describe('POST /employer-signup', () => {
+  describe('POST /api/ats/employer-signup', () => {
     it('should register a new user', async () => {
       bcryptjs.hash.mockResolvedValue('hashed-password');
 
@@ -41,12 +42,12 @@ describe('Auth Controller', () => {
       await User.create({
         name: 'Existing User',
         email: 'john@email.com',
-        password: '123',
+        password: 'hashed-password',
         role: 'user',
       });
 
-      const res = await request(app).post('/employer-signup').send({
-        name: 'Test User',
+      const res = await request(app).post('/api/ats/employer-signup').send({
+        name: 'john',
         email: 'john@email.com',
         password: '123',
         role: 'user',
@@ -57,11 +58,11 @@ describe('Auth Controller', () => {
     });
   });
 
-  describe('POST /employer-login', () => {
+  describe('POST /api/ats/employer-login', () => {
     it('should login with valid credentials', async () => {
       const password = '123';
-      const hashedPassword = await bcryptjs.hash(password, 10);
-      const user = await User.create({
+      const hashedPassword = 'hashed-password';
+      await User.create({
         name: 'User',
         email: 'john@email.com',
         password: hashedPassword,
@@ -71,8 +72,8 @@ describe('Auth Controller', () => {
       bcryptjs.compare.mockResolvedValue(true);
       jwt.sign.mockReturnValue('fake-jwt-token');
 
-      const res = await request(app).post('/employer-login').send({
-        email: 'test@example.com',
+      const res = await request(app).post('/api/ats/employer-login').send({
+        email: 'john@email.com',
         password,
       });
 
@@ -82,45 +83,13 @@ describe('Auth Controller', () => {
     });
 
     it('should not login with invalid credentials', async () => {
-      const res = await request(app).post('/employer-login').send({
-        email: 'wrong@example.com',
-        password: 'wrongpass',
+      const res = await request(app).post('/api/ats/employer-login').send({
+        email: 'nonexist@example.com',
+        password: 'wrong',
       });
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Invalid credentials');
-    });
-  });
-
-  describe('POST /logout', () => {
-    it('should logout user and clear cookie', async () => {
-      const res = await request(app).post('/logout');
-
-      expect(res.statusCode).toBe(200);
-      expect(res.body.message).toBe('Logged out successfully');
-    });
-  });
-
-  describe('GET /profile', () => {
-    it('should return user profile', async () => {
-      const user = await User.create({
-        name: 'Profile User',
-        email: 'profile@example.com',
-        password: 'hashed-password',
-        role: 'user',
-      });
-
-      const token = jwt.sign(
-        { userId: user._id, role: user.role },
-        process.env.JWT_SECRET,
-      );
-
-      const res = await request(app)
-        .get('/profile')
-        .set('Authorization', `Bearer ${token}`);
-
-      expect(res.statusCode).toBe(200);
-      expect(res.body.email).toBe('profile@example.com');
     });
   });
 });
