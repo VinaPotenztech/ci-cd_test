@@ -7,7 +7,7 @@ on:
 env:
   AWS_REGION: us-east-1
   STACK_NAME: cicd-test
-  MONGO_URI: mongodb+srv://vina:vina@cluster0.i3fl1.mongodb.net/cicd?retryWrites=true&w=majority&appName=Cluster0
+  MONGO_URI: mongodb+srv://vina:mVF7stUTXnGoHZjH@cluster0.i3fl1.mongodb.net/cicd?retryWrites=true&w=majority&appName=Cluster0
 
 jobs:
   local-test:
@@ -16,85 +16,97 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Set up Python (for SAM CLI)
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install AWS SAM CLI
         run: pip install aws-sam-cli
 
-      - name: Build SAM application
-        run: sam build
-
       - name: Install test dependencies
         working-directory: ./src
         run: npm install
 
+      - name: Build SAM application
+        run: sam build
+
       - name: Start local API in background
         run: |
-          sam local start-api > sam-output.log 2>&1 &
+          sam local start-api --env-vars env.json > sam-output.log 2>&1 &
           echo $! > sam.pid
         env:
           DOCKER_LAMBDA_USE_STDIN: 1
 
       - name: Wait for API to be ready
         run: |
-          for i in {1..10}; do
-            if curl -s http://127.0.0.1:3000/employer-login; then
+          for i in {1..30}; do
+            if curl -s -f http://127.0.0.1:3000/api/users > /dev/null; then
               echo "API is up"
               break
             fi
-            echo "Waiting for API..."
+            echo "Waiting for API... ($i/30)"
             sleep 5
+            if [ $i -eq 30 ]; then
+              echo "API failed to start"
+              cat sam-output.log
+              exit 1
+            fi
           done
 
       - name: Run tests
         working-directory: ./src
         run: npm test
+        env:
+          MONGODB_URI: ${{ secrets.MONGO_URI }}
+          TEST_MONGODB_URI: ${{ secrets.TEST_MONGO_URI }}
 
       - name: Stop SAM local
-        run: kill $(cat sam.pid) || true
-
-  deploy:
-    name: Deploy SAM
-    runs-on: ubuntu-latest
-    needs: local-test
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Set up Python (for SAM CLI)
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install AWS SAM CLI
-        run: pip install aws-sam-cli
-
-      - name: Build SAM
-        run: sam build
-
-      - name: Deploy SAM
         run: |
-          sam deploy \
-            --stack-name ${{ env.STACK_NAME }} \
-            --region ${{ env.AWS_REGION }} \
-            --capabilities CAPABILITY_IAM \
-            --no-confirm-changeset \
-            --no-fail-on-empty-changeset
+          if [ -f sam.pid ]; then
+            kill $(cat sam.pid) || true
+            rm sam.pid
+          fi
+
+deploy:
+  name: Deploy SAM
+  runs-on: ubuntu-latest
+  needs: local-test
+
+  steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Set up Python (for SAM CLI)
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install AWS SAM CLI
+      run: pip install aws-sam-cli
+
+    - name: Build SAM
+      run: sam build
+
+    - name: Deploy SAM
+      run: |
+        sam deploy \
+          --stack-name ${{ env.STACK_NAME }} \
+          --region ${{ env.AWS_REGION }} \
+          --capabilities CAPABILITY_IAM \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset
