@@ -5,7 +5,7 @@ on:
     branches: [main, staging]
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: ap-south-1
   STACK_NAME: cicd-test
   MONGO_URI: mongodb+srv://vina:vina@cluster0.i3fl1.mongodb.net/cicd?retryWrites=true&w=majority&appName=Cluster0
 
