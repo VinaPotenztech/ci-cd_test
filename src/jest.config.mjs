@@ -10,10 +10,8 @@ export default {
   globals: {
     __DEV__: true, // if needed for your setup
   },
+  testEnvironment: 'node',
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  //extensionsToTreatAsEsm: ['.js', '.mjs'],
 };
-
-// transform: {},
