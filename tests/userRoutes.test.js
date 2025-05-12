@@ -25,7 +25,7 @@ describe('User Routes', () => {
       const response = await request(app).post('/api/users').send({
         name: 'Jane Doe',
         email: 'jane@example.com',
-        age: 25,
+        password: 25,
       });
 
       expect(response.status).toBe(201);
@@ -39,7 +39,7 @@ describe('User Routes', () => {
       await new User({
         name: 'Jane Doe',
         email: 'jane@example.com',
-        age: 25,
+        password: 25,
       }).save();
 
       const response = await request(app).get('/api/users');
@@ -47,6 +47,20 @@ describe('User Routes', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(1);
       expect(response.body[0].name).toBe('Jane Doe');
+    });
+  });
+
+  describe('POST /api/users/register', () => {
+    it('should register a new user', async () => {
+      const response = await request(app).post('/api/users').send({
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+        password: 25,
+      });
+
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('_id');
+      expect(response.body.name).toBe('Jane Doe');
     });
   });
 });
