@@ -7,9 +7,83 @@ on:
 env:
   AWS_REGION: ap-south-1
   STACK_NAME: cicd-test
-  MONGO_URI: mongodb+srv://vina:vina@cluster0.i3fl1.mongodb.net/cicd?retryWrites=true&w=majority&appName=Cluster0
+  MONGO_URI: mongodb+srv://vina:mVF7stUTXnGoHZjH@cluster0.i3fl1.mongodb.net/cicd?retryWrites=true&w=majority&appName=Cluster0
 
 jobs:
+  local-test:
+    name: Run Tests and Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Set up Python (for SAM CLI)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install AWS SAM CLI
+        run: pip install aws-sam-cli
+
+      - name: Build SAM application
+        run: sam build
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+  deploy:
+    name: Deploy to AWS using SAM
+    runs-on: ubuntu-latest
+    needs: local-test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python (for SAM CLI)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install AWS SAM CLI
+        run: pip install aws-sam-cli
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Build SAM application
+        run: sam build
+
+      - name: Deploy SAM stack
+        run: |
+          sam deploy \
+            --stack-name ${{ env.STACK_NAME }} \
+            --region ${{ env.AWS_REGION }} \
+            --capabilities CAPABILITY_IAM \
+            --resolve-s3 \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset
   local-test:
     name: Run Tests and Lint
     runs-on: ubuntu-latest
@@ -43,11 +117,9 @@ jobs:
         run: sam build
 
       - name: Install npm dependencies
-        working-directory: ./src
         run: npm install
 
       - name: Run tests
-        working-directory: ./src
         run: npm test
 
   deploy:
