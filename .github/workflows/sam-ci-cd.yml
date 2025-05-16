@@ -5,9 +5,9 @@ on:
     branches: [main, staging]
 
 env:
-  AWS_REGION: ap-south-1 # Set a default or override in repo/organization secrets
+  AWS_REGION: ap-south-1
   STACK_NAME: cicd-test
-  MONGO_URI: mongodb+srv://vina:mVF7stUTXnGoHZjH@cluster0.i3fl1.mongodb.net/cicd?retryWrites=true&w=majority&appName=Cluster0 # Assuming you're using a secret
+  MONGO_URI: mongodb+srv://vina:mVF7stUTXnGoHZjH@cluster0.i3fl1.mongodb.net/cicd?retryWrites=true&w=majority&appName=Cluster0
 
 jobs:
   local-test:
